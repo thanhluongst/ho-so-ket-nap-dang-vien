@@ -1,0 +1,634 @@
+<meta charset="utf-8">
+<title>Hồ sơ kết nạp đảng viên</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Noto+Serif:wght@600;700&display=swap">
+<style>
+/* Bố cục: thanh mục bên trái · biểu mẫu ở giữa · khung xuất hồ sơ bên phải; điện thoại xếp một cột */
+:root {
+  --bg: #fbfaf9;
+  --surface: #ffffff;
+  --fg: #1f1a19;
+  --muted: #6d6361;
+  --line: #e6e0de;
+  --accent: #a3221c;
+  --accent-soft: #f6e7e5;
+  --accent-fg: #ffffff;
+  --ok: #2f6b3a;
+  --warn: #a35a00;
+  --err-bg: #fdecea;
+  --font-display: "Noto Serif", Georgia, "Times New Roman", serif;
+  --font-body: "Be Vietnam Pro", "Segoe UI", Roboto, Arial, sans-serif;
+  --r: 6px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #171413; --surface: #211d1c; --fg: #f1ebe9; --muted: #a89e9b; --line: #3a3331;
+    --accent: #e0645b; --accent-soft: #3a2220; --accent-fg: #1a0e0d; --ok: #7cc489; --warn: #e0a050; --err-bg: #3d2120;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #171413; --surface: #211d1c; --fg: #f1ebe9; --muted: #a89e9b; --line: #3a3331;
+  --accent: #e0645b; --accent-soft: #3a2220; --accent-fg: #1a0e0d; --ok: #7cc489; --warn: #e0a050; --err-bg: #3d2120;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font: 15px/1.55 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 48px;
+}
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 20px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; border-bottom: 2px solid var(--accent); padding-bottom: 12px; }
+h1 { font: 700 26px/1.2 var(--font-display); margin: 0; text-wrap: balance; }
+.sub { color: var(--muted); margin: 2px 0 0; }
+.codes { display: flex; flex-wrap: wrap; gap: 6px; }
+.code { font-size: 12px; letter-spacing: .04em; border: 1px solid var(--line); border-radius: 99px; padding: 2px 9px; color: var(--muted); }
+
+.grid { display: grid; grid-template-columns: 210px minmax(0, 1fr) 290px; gap: 24px; align-items: start; }
+nav { position: sticky; top: calc(12px + env(safe-area-inset-top, 0px)); display: grid; gap: 2px; }
+nav button {
+  all: unset; cursor: pointer; display: flex; justify-content: space-between; gap: 8px; padding: 8px 12px;
+  border-radius: var(--r); color: var(--fg);
+}
+nav button:hover { background: var(--accent-soft); }
+nav button[aria-current="true"] { background: var(--accent); color: var(--accent-fg); font-weight: 600; }
+nav button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+nav .cnt { font-size: 12px; opacity: .75; font-variant-numeric: tabular-nums; }
+
+main { min-width: 0; }
+section.tab { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 20px 22px 24px; }
+section.tab h2 { font: 600 19px/1.3 var(--font-display); margin: 0 0 4px; }
+section.tab .lead { color: var(--muted); margin: 0 0 18px; font-size: 14px; }
+.fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 18px; }
+.f { display: grid; gap: 4px; min-width: 0; }
+.f.wide { grid-column: 1 / -1; }
+label { font-weight: 500; font-size: 14px; }
+input, textarea {
+  font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: var(--r);
+  padding: 8px 10px; width: 100%;
+}
+textarea { min-height: 150px; resize: vertical; line-height: 1.5; }
+input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
+.f.bad input, .f.bad textarea { border-color: var(--accent); background: var(--err-bg); }
+.hint { font-size: 12.5px; color: var(--muted); min-height: 1em; }
+.hint.calc { color: var(--ok); }
+.calcbox { grid-column: 1 / -1; background: var(--accent-soft); border-radius: var(--r); padding: 10px 14px; font-size: 14px; font-variant-numeric: tabular-nums; }
+.calcbox b { font-weight: 600; }
+.pager { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; }
+
+aside { position: sticky; top: calc(12px + env(safe-area-inset-top, 0px)); display: grid; gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: grid; gap: 12px; }
+.card h3 { margin: 0; font: 600 16px/1.3 var(--font-display); }
+.mau { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.mau li { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px; align-items: center; padding: 6px 0; border-top: 1px solid var(--line); }
+.mau li:first-child { border-top: 0; }
+.mau .t { font-size: 14px; }
+.mau .s { font-size: 12px; color: var(--muted); }
+.mau .s.miss { color: var(--warn); }
+button.btn {
+  font: inherit; font-weight: 600; cursor: pointer; border-radius: var(--r); padding: 9px 14px;
+  border: 1px solid var(--accent); background: var(--accent); color: var(--accent-fg);
+}
+button.btn.ghost { background: transparent; color: var(--accent); }
+button.btn.small { padding: 3px 9px; font-size: 13px; font-weight: 500; }
+button.btn:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+button.btn:disabled { opacity: .45; cursor: not-allowed; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; }
+.msg { font-size: 13.5px; border-radius: var(--r); padding: 8px 10px; }
+.msg.err { background: var(--err-bg); }
+.msg.ok { color: var(--ok); }
+.note { font-size: 12.5px; color: var(--muted); margin: 0; }
+input[type=file] { display: none; }
+
+@media (max-width: 1000px) {
+  .grid { grid-template-columns: minmax(0, 1fr); }
+  nav { position: static; display: flex; overflow-x: auto; gap: 6px; padding-bottom: 4px; }
+  nav button { white-space: nowrap; border: 1px solid var(--line); }
+  aside { position: static; }
+}
+@media (max-width: 560px) {
+  .fields { grid-template-columns: minmax(0, 1fr); }
+  section.tab { padding: 16px; }
+}
+@media (prefers-reduced-motion: no-preference) { nav button, button.btn { transition: background .15s, color .15s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Hồ sơ kết nạp đảng viên</h1>
+      <p class="sub">Nhập thông tin một lần, xuất đủ bộ mẫu Word để in và ký.</p>
+    </div>
+    <div class="codes" aria-label="Các mẫu được xuất">
+      <span class="code">1-KNĐ</span><span class="code">3-KNĐ</span><span class="code">5-KNĐ</span><span class="code">6-KNĐ</span><span class="code">8-KNĐ</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <nav id="nav" aria-label="Các mục thông tin"></nav>
+    <main id="main"></main>
+    <aside>
+      <div class="card">
+        <h3>Xuất hồ sơ</h3>
+        <ul class="mau" id="mauList"></ul>
+        <button class="btn" id="btnZip" type="button">Tải cả bộ (.zip)</button>
+        <div id="exportMsg" hidden></div>
+        <p class="note">Ô nào để trống sẽ giữ dấu "……" trên mẫu để viết tay.</p>
+      </div>
+      <div class="card">
+        <h3>Thông tin đã nhập</h3>
+        <p class="note">Trình duyệt tự nhớ bản đang nhập. Muốn lưu lâu dài hoặc chuyển máy, hãy tải file thông tin về.</p>
+        <div class="row">
+          <button class="btn ghost small" id="btnSaveJson" type="button">Tải file thông tin</button>
+          <button class="btn ghost small" id="btnOpenJson" type="button">Mở file thông tin</button>
+          <input type="file" id="fileJson" accept=".json,application/json">
+        </div>
+        <div class="row">
+          <button class="btn ghost small" id="btnNew" type="button">Hồ sơ mới</button>
+          <button class="btn ghost small" id="btnSample" type="button">Điền ví dụ</button>
+        </div>
+        <div id="newConfirm" class="msg err" hidden>
+          Xóa thông tin quần chúng đang nhập? Tab Đơn vị được giữ nguyên.
+          <div class="row" style="margin-top:6px">
+            <button class="btn small" id="btnNewYes" type="button">Xóa, làm hồ sơ mới</button>
+            <button class="btn ghost small" id="btnNewNo" type="button">Thôi</button>
+          </div>
+        </div>
+        <div id="dataMsg" class="msg" hidden></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.47.4/docxtemplater.js"></script>
+<script src="mau_data.js"></script>
+<script>
+const TRONG = '……………', TRONG_NGAY = '……';
+
+const NHAN_THUC = `Đảng Cộng sản Việt Nam là đội tiên phong của giai cấp công nhân, đồng thời là đội tiên phong của nhân dân lao động và của dân tộc Việt Nam; đại biểu trung thành lợi ích của giai cấp công nhân, nhân dân lao động và của dân tộc.
+Đảng lấy chủ nghĩa Mác - Lênin và tư tưởng Hồ Chí Minh làm nền tảng tư tưởng, kim chỉ nam cho hành động, lấy tập trung dân chủ làm nguyên tắc tổ chức cơ bản.
+Mục đích của Đảng là xây dựng nước Việt Nam độc lập, dân chủ, giàu mạnh, xã hội công bằng, văn minh, không còn người bóc lột người, thực hiện thành công chủ nghĩa xã hội và cuối cùng là chủ nghĩa cộng sản.
+Đảng viên Đảng Cộng sản Việt Nam là chiến sĩ cách mạng trong đội tiên phong của giai cấp công nhân, nhân dân lao động và dân tộc Việt Nam, suốt đời phấn đấu cho mục đích, lý tưởng của Đảng, đặt lợi ích của Tổ quốc, của giai cấp công nhân và nhân dân lao động lên trên lợi ích cá nhân; chấp hành nghiêm chỉnh Cương lĩnh chính trị, Điều lệ Đảng, các nghị quyết của Đảng và pháp luật của Nhà nước.
+Từ những nhận thức trên, tôi tự nguyện làm đơn này, đề nghị Chi bộ, Đảng ủy xem xét, kết nạp tôi vào Đảng Cộng sản Việt Nam. Nếu được đứng trong hàng ngũ của Đảng, tôi xin hứa luôn chấp hành nghiêm Cương lĩnh, Điều lệ Đảng, chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước; không ngừng học tập, rèn luyện, nâng cao trình độ chuyên môn và phẩm chất đạo đức; tích cực tham gia công tác quần chúng, giữ gìn sự đoàn kết thống nhất trong Đảng.`;
+const LY_LICH = `Lý lịch rõ ràng. Bản thân và gia đình chấp hành tốt chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước; không vi phạm về lịch sử chính trị và chính trị hiện nay theo quy định.`;
+const UU_DIEM = `Có lập trường tư tưởng chính trị vững vàng; chấp hành tốt chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước và nội quy, quy chế của cơ quan.
+Có phẩm chất đạo đức tốt, lối sống giản dị, lành mạnh; có tinh thần trách nhiệm trong công việc.
+Có năng lực chuyên môn, hoàn thành tốt nhiệm vụ được giao; tích cực học tập, bồi dưỡng nâng cao trình độ.
+Có mối quan hệ tốt với đồng nghiệp, học sinh và nhân dân nơi cư trú; được quần chúng tín nhiệm.`;
+const KHUYET_DIEM = `Kinh nghiệm công tác còn hạn chế, cần tiếp tục học tập, rèn luyện thêm.`;
+
+// [khóa, nhãn, kiểu, mặc định, ghi chú] — kiểu: text | date | int | long
+const TABS = [
+  ['donvi', 'Đơn vị', 'Chỉ cần nhập lần đầu, trình duyệt sẽ nhớ cho các hồ sơ sau.', [
+    ['truong', 'Tên trường', 'text', 'THCS Nhơn Mỹ', 'Không ghi chữ "Trường"'],
+    ['chi_bo', 'Tên chi bộ', 'text', '', 'VD: Giáo viên 1 (không ghi chữ "Chi bộ")'],
+    ['dia_danh', 'Địa danh ghi ngày tháng', 'text', 'Nhơn Mỹ', ''],
+    ['bt_chi_bo', 'Họ tên Bí thư chi bộ', 'text', '', ''],
+    ['bt_dang_uy', 'Họ tên Bí thư Đảng ủy', 'text', '', ''],
+    ['dv_ct', 'Số đảng viên chính thức của chi bộ', 'int', '', ''],
+    ['dv_db', 'Số đảng viên dự bị của chi bộ', 'int', '0', ''],
+    ['uv_tong', 'Tổng số ủy viên BCH Đảng bộ', 'int', '', ''],
+  ]],
+  ['quanchung', 'Quần chúng', 'Thông tin người xin vào Đảng, dùng cho Mẫu 1 và tên trong các mẫu khác.', [
+    ['ho_ten', 'Họ và tên', 'text', '', 'Bắt buộc'],
+    ['ngay_sinh', 'Ngày sinh', 'date', '', ''],
+    ['noi_sinh', 'Nơi sinh', 'text', '', ''],
+    ['que_quan', 'Quê quán', 'text', '', ''],
+    ['dan_toc', 'Dân tộc', 'text', 'Kinh', ''],
+    ['ton_giao', 'Tôn giáo', 'text', 'Không', ''],
+    ['hoc_van', 'Trình độ học vấn', 'text', '12/12', ''],
+    ['cu_tru', 'Nơi cư trú', 'text', '', ''],
+    ['nghe_nghiep', 'Nghề nghiệp', 'text', 'Giáo viên', ''],
+    ['don_vi', 'Đơn vị công tác', 'text', 'Trường THCS Nhơn Mỹ', ''],
+    ['chuc_vu', 'Chức vụ chính quyền, đoàn thể', 'text', '', ''],
+    ['ngay_doan', 'Ngày vào Đoàn', 'date', '', ''],
+    ['doan_noi', 'Nơi vào Đoàn', 'text', '', ''],
+    ['ngay_ctd', 'Ngày được xét cảm tình Đảng', 'date', '', ''],
+    ['ctd_chi_bo', 'Tại chi bộ', 'text', '', 'Để trống = chi bộ hiện tại'],
+    ['ngay_don', 'Ngày làm đơn (Mẫu 1)', 'date', '', ''],
+  ]],
+  ['gioithieu', 'Người giới thiệu', 'Đảng viên được phân công giúp đỡ, dùng cho Mẫu 3.', [
+    ['gt_ten', 'Họ tên đảng viên giới thiệu', 'text', '', ''],
+    ['gt_ns', 'Ngày sinh', 'date', '', ''],
+    ['gt_vd', 'Ngày vào Đảng', 'date', '', ''],
+    ['gt_ct', 'Ngày chính thức', 'date', '', ''],
+    ['gt_cv_dang', 'Chức vụ trong Đảng', 'text', 'Đảng viên', ''],
+    ['gt_cv_cq', 'Chức vụ chính quyền', 'text', 'Giáo viên', ''],
+    ['gt_que', 'Quê quán', 'text', '', ''],
+    ['gt_chi_bo', 'Đang sinh hoạt tại chi bộ', 'text', '', 'Để trống = chi bộ hiện tại'],
+    ['ngay_pc', 'Ngày được phân công giúp đỡ', 'date', '', ''],
+    ['ngay_gt_ky', 'Ngày ký giấy giới thiệu', 'date', '', ''],
+  ]],
+  ['doanthe', 'Đoàn thể & Cư trú', 'Ý kiến của đoàn thể nơi sinh hoạt và chi ủy nơi cư trú, dùng cho Mẫu 5.', [
+    ['ngay_m5', 'Ngày lập tổng hợp', 'date', '', ''],
+    ['ten_doan_the', 'Tên các đoàn thể nơi sinh hoạt', 'text', '', 'VD: Công đoàn, Chi đoàn giáo viên Trường THCS Nhơn Mỹ'],
+    ['so_dt', 'Số đồng chí đại diện đoàn thể được hỏi', 'int', '', ''],
+    ['dt_tan', 'Số tán thành (đoàn thể)', 'int', '', 'Để trống = tất cả tán thành'],
+    ['dt_lydo', 'Lý do không tán thành (đoàn thể)', 'text', '', ''],
+    ['ten_ct', 'Tên chi ủy nơi cư trú', 'text', '', 'VD: Chi bộ ấp Mỹ Hòa'],
+    ['so_ct', 'Số đồng chí chi ủy nơi cư trú được hỏi', 'int', '', ''],
+    ['ct_tan', 'Số tán thành (nơi cư trú)', 'int', '', 'Để trống = tất cả tán thành'],
+    ['ct_lydo', 'Lý do không tán thành (nơi cư trú)', 'text', '', ''],
+  ]],
+  ['chibo', 'Họp chi bộ', 'Cuộc họp chi bộ xét đề nghị kết nạp, dùng cho Mẫu 6.', [
+    ['so_nq_cb', 'Số Nghị quyết chi bộ', 'text', '', 'VD: 05'],
+    ['ngay_cb', 'Ngày họp / ra nghị quyết', 'date', '', ''],
+    ['vm_ct', 'Số đảng viên chính thức vắng', 'int', '0', ''],
+    ['vm_db', 'Số đảng viên dự bị vắng', 'int', '0', ''],
+    ['cb_lydo_vang', 'Lý do vắng mặt', 'text', '', ''],
+    ['cb_chu_tri', 'Chủ trì hội nghị', 'text', '', 'Để trống = Bí thư chi bộ'],
+    ['cb_chuc_vu', 'Chức vụ người chủ trì', 'text', 'Bí thư chi bộ', ''],
+    ['cb_thu_ky', 'Thư ký hội nghị', 'text', '', ''],
+    ['cb_tan', 'Số đảng viên chính thức tán thành', 'int', '', 'Để trống = tất cả chính thức có mặt'],
+    ['cb_lydo_khong', 'Lý do không tán thành', 'text', '', ''],
+  ]],
+  ['dangu', 'Họp Đảng ủy', 'Cuộc họp Ban Chấp hành Đảng bộ, dùng cho Mẫu 8.', [
+    ['so_nq_du', 'Số Nghị quyết Đảng ủy', 'text', '', ''],
+    ['ngay_du', 'Ngày họp / ra nghị quyết', 'date', '', ''],
+    ['uv_vm', 'Số ủy viên vắng mặt', 'int', '0', ''],
+    ['du_lydo_vang', 'Lý do vắng mặt', 'text', '', ''],
+    ['du_chu_tri', 'Chủ trì hội nghị', 'text', '', 'Để trống = Bí thư Đảng ủy'],
+    ['du_chuc_vu', 'Chức vụ người chủ trì', 'text', 'Bí thư Đảng ủy', ''],
+    ['du_thu_ky', 'Thư ký hội nghị', 'text', '', ''],
+    ['du_dy', 'Số ủy viên đồng ý', 'int', '', 'Để trống = tất cả có mặt'],
+    ['du_lydo_khong', 'Lý do không đồng ý', 'text', '', ''],
+  ]],
+  ['nhanxet', 'Nhận xét', 'Nội dung gợi ý sẵn, hãy sửa cho đúng từng người. Mỗi dòng là một đoạn trên mẫu.', [
+    ['nhan_thuc', 'Nhận thức về Đảng (Mẫu 1, người làm đơn tự viết)', 'long', NHAN_THUC, ''],
+    ['ly_lich', 'Về lý lịch (Mẫu 3, 6, 8)', 'long', LY_LICH, ''],
+    ['uu_diem', 'Ưu điểm (Mẫu 3, 5, 6, 8)', 'long', UU_DIEM, ''],
+    ['khuyet_diem', 'Khuyết điểm (Mẫu 3, 5, 6, 8)', 'long', KHUYET_DIEM, ''],
+  ]],
+];
+const FIELDS = {};
+TABS.forEach(([tid, , , fs]) => fs.forEach(f => FIELDS[f[0]] = { key: f[0], label: f[1], kind: f[2], def: f[3], note: f[4], tab: tid }));
+const DON_VI_KEYS = TABS[0][3].map(f => f[0]);
+
+const MAU = [
+  ['mau1', 'Mẫu 1-KNĐ', 'Đơn xin vào Đảng', ['ho_ten', 'ngay_sinh', 'que_quan', 'cu_tru', 'ngay_doan', 'ngay_ctd', 'ngay_don', 'chi_bo']],
+  ['mau3', 'Mẫu 3-KNĐ', 'Giấy giới thiệu', ['gt_ten', 'gt_ns', 'gt_vd', 'gt_ct', 'gt_que', 'ngay_pc', 'ngay_gt_ky']],
+  ['mau5', 'Mẫu 5-KNĐ', 'Tổng hợp ý kiến đoàn thể, nơi cư trú', ['ngay_m5', 'ten_doan_the', 'so_dt', 'ten_ct', 'so_ct', 'bt_chi_bo']],
+  ['mau6', 'Mẫu 6-KNĐ', 'Nghị quyết chi bộ', ['so_nq_cb', 'ngay_cb', 'dv_ct', 'cb_thu_ky', 'bt_chi_bo']],
+  ['mau8', 'Mẫu 8-KNĐ', 'Nghị quyết Đảng ủy', ['so_nq_du', 'ngay_du', 'uv_tong', 'du_thu_ky', 'bt_dang_uy']],
+];
+
+class LoiNhap extends Error { constructor(msg, key) { super(msg); this.key = key; } }
+
+// ---------- lưu trong trình duyệt
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+function defaults() { const d = {}; for (const k in FIELDS) d[k] = FIELDS[k].def; return d; }
+
+// ---------- tính toán
+function parseDate(key, s) {
+  s = (s || '').trim();
+  if (!s) return null;
+  const m = s.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})$/);
+  if (!m) throw new LoiNhap(`"${FIELDS[key].label}": ngày phải có dạng ngày/tháng/năm, ví dụ 05/03/1998.`, key);
+  const [d, mo, y] = [+m[1], +m[2], +m[3]];
+  const dt = new Date(y, mo - 1, d);
+  if (dt.getFullYear() !== y || dt.getMonth() !== mo - 1 || dt.getDate() !== d)
+    throw new LoiNhap(`"${FIELDS[key].label}": ngày ${s} không có trên lịch.`, key);
+  return [String(d).padStart(2, '0'), String(mo).padStart(2, '0'), String(y)];
+}
+function parseInt_(key, s) {
+  s = String(s ?? '').trim();
+  if (!s) return null;
+  if (!/^\d+$/.test(s)) throw new LoiNhap(`"${FIELDS[key].label}" phải là số nguyên (đang là "${s}").`, key);
+  return +s;
+}
+function pct(a, b) {
+  if (a == null || !b) return TRONG_NGAY;
+  const v = Math.round(a * 10000 / b) / 100;
+  return String(v).replace('.', ',');
+}
+const lines = s => (s || '').split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+
+function buildContext(data) {
+  const v = {};
+  for (const k in FIELDS) v[k] = String(data[k] ?? '').trim();
+  if (!v.ho_ten) throw new LoiNhap('Chưa nhập họ tên quần chúng.', 'ho_ten');
+  const n = {};
+  for (const k in FIELDS) if (FIELDS[k].kind === 'int') n[k] = parseInt_(k, v[k]);
+
+  const c = {};
+  for (const k in FIELDS) if (FIELDS[k].kind === 'text') c[k] = v[k] || TRONG;
+  c.ctd_chi_bo = v.ctd_chi_bo || v.chi_bo || TRONG;
+  c.gt_chi_bo = v.gt_chi_bo || v.chi_bo || TRONG;
+  c.don_vi = v.don_vi || (v.truong ? `Trường ${v.truong}` : TRONG);
+  c.cb_chu_tri = v.cb_chu_tri || v.bt_chi_bo || TRONG;
+  c.du_chu_tri = v.du_chu_tri || v.bt_dang_uy || TRONG;
+  c.TRUONG = v.truong.toUpperCase() || TRONG;
+  c.CHI_BO = v.chi_bo.toUpperCase() || TRONG;
+  c.DANG_UY = v.truong ? `TRƯỜNG ${v.truong.toUpperCase()}` : TRONG;
+  c.dang_bo = v.truong ? `Trường ${v.truong}` : TRONG;
+  c.so_nq_cb = v.so_nq_cb || '      ';
+  c.so_nq_du = v.so_nq_du || '      ';
+
+  for (const [key, p] of [['ngay_sinh', 'ns'], ['ngay_doan', 'doan'], ['ngay_ctd', 'ctd'], ['ngay_don', 'don'],
+    ['gt_ns', 'gt_ns'], ['gt_vd', 'gt_vd'], ['gt_ct', 'gt_ct'], ['ngay_pc', 'pc'], ['ngay_gt_ky', 'gt_ky'],
+    ['ngay_m5', 'm5'], ['ngay_cb', 'cb'], ['ngay_du', 'du']]) {
+    const parts = parseDate(key, v[key]) || [TRONG_NGAY, TRONG_NGAY, TRONG_NGAY];
+    [c[p + '_d'], c[p + '_m'], c[p + '_y']] = parts;
+  }
+
+  const so = x => x == null ? TRONG_NGAY : String(x);
+  const lyDo = (khong, t) => khong === 0 ? 'không.' : (t ? t.replace(/\.+$/, '') + '.' : TRONG);
+  const check = (tan, tong, ten, key) => {
+    if (tan != null && tong != null && tan > tong) throw new LoiNhap(`${ten}: số tán thành (${tan}) lớn hơn tổng số (${tong}).`, key);
+  };
+
+  // Mẫu 5
+  for (const [p, tk] of [['dt', 'so_dt'], ['ct', 'so_ct']]) {
+    const tong = n[tk];
+    const tan = n[p + '_tan'] ?? tong;
+    check(tan, tong, 'Đoàn thể & Cư trú', p + '_tan');
+    const khong = (tan == null || tong == null) ? null : tong - tan;
+    Object.assign(c, { [p + '_tan']: so(tan), [p + '_tong']: so(tong), [p + '_pt']: pct(tan, tong),
+      [p + '_khong']: so(khong), [p + '_kpt']: pct(khong, tong), [p + '_lydo']: lyDo(khong, v[p + '_lydo']) });
+  }
+  c.so_dt = so(n.so_dt); c.so_ct = so(n.so_ct);
+
+  // Mẫu 6
+  const dvCt = n.dv_ct, dvDb = n.dv_db ?? 0, vmCt = n.vm_ct ?? 0, vmDb = n.vm_db ?? 0;
+  if (dvCt != null && vmCt > dvCt) throw new LoiNhap('Họp chi bộ: số chính thức vắng lớn hơn số đảng viên chính thức.', 'vm_ct');
+  if (vmDb > dvDb) throw new LoiNhap('Họp chi bộ: số dự bị vắng lớn hơn số đảng viên dự bị.', 'vm_db');
+  const cmCt = dvCt == null ? null : dvCt - vmCt;
+  const cbTan = n.cb_tan ?? cmCt;
+  check(cbTan, cmCt, 'Họp chi bộ (so với số chính thức có mặt)', 'cb_tan');
+  const cbKhong = (cbTan == null || cmCt == null) ? null : cmCt - cbTan;
+  Object.assign(c, {
+    tong_dv: so(dvCt == null ? null : dvCt + dvDb), dv_ct: so(dvCt), dv_db: so(dvDb),
+    cm_tong: so(cmCt == null ? null : cmCt + dvDb - vmDb), cm_ct: so(cmCt), cm_db: so(dvDb - vmDb),
+    vm_tong: so(vmCt + vmDb), vm_ct: so(vmCt), vm_db: so(vmDb),
+    cb_lydo_vang: v.cb_lydo_vang || (vmCt + vmDb === 0 ? 'không.' : TRONG),
+    cb_tan: so(cbTan), cb_pt: pct(cbTan, dvCt), cb_khong: so(cbKhong), cb_kpt: pct(cbKhong, dvCt),
+    cb_lydo_khong: lyDo(cbKhong, v.cb_lydo_khong),
+  });
+
+  // Mẫu 8
+  const uv = n.uv_tong, uvVm = n.uv_vm ?? 0;
+  if (uv != null && uvVm > uv) throw new LoiNhap('Họp Đảng ủy: số vắng mặt lớn hơn tổng số ủy viên.', 'uv_vm');
+  const uvCm = uv == null ? null : uv - uvVm;
+  const duDy = n.du_dy ?? uvCm;
+  check(duDy, uvCm, 'Họp Đảng ủy (so với số có mặt)', 'du_dy');
+  const duKdy = (duDy == null || uvCm == null) ? null : uvCm - duDy;
+  Object.assign(c, {
+    uv_tong: so(uv), uv_cm: so(uvCm), uv_vm: so(uvVm),
+    du_lydo_vang: v.du_lydo_vang || (uvVm === 0 ? 'không.' : TRONG),
+    du_dy: so(duDy), du_pt: pct(duDy, uv), du_kdy: so(duKdy), du_kpt: pct(duKdy, uv),
+    du_lydo_khong: lyDo(duKdy, v.du_lydo_khong),
+  });
+
+  const gach = xs => xs.map(x => /^[-+*]/.test(x) ? x : `- ${x}`);
+  c.nhan_thuc = lines(v.nhan_thuc).length ? lines(v.nhan_thuc) : [TRONG.repeat(6)];
+  c.ly_lich = lines(v.ly_lich).length ? lines(v.ly_lich) : [TRONG.repeat(6)];
+  const uu = lines(v.uu_diem), kd = lines(v.khuyet_diem);
+  c.uu_kd = ['* Ưu điểm:', ...gach(uu.length ? uu : [TRONG.repeat(6)]), '* Khuyết điểm:', ...gach(kd.length ? kd : [TRONG.repeat(6)])];
+  return c;
+}
+
+// ---------- tạo file Word
+function b64ToBytes(b64) { const s = atob(b64); const a = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; }
+function renderMau(key, ctx) {
+  const doc = new window.docxtemplater(new PizZip(b64ToBytes(window.MAU_DATA[key])), {
+    paragraphLoop: true, linebreaks: true, delimiters: { start: '{{', end: '}}' },
+    nullGetter: () => '',
+  });
+  doc.render(ctx);
+  return doc.getZip().generate({ type: 'uint8array', compression: 'DEFLATE' });
+}
+const tenFile = s => s.replace(/[\\/:*?"<>|]/g, '').trim();
+
+// ---------- giao diện
+let data = defaults();
+let current = 'donvi';
+const $ = id => document.getElementById(id);
+
+function buildUI() {
+  const nav = $('nav'), main = $('main');
+  TABS.forEach(([tid, name, lead, fs], i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.dataset.tab = tid;
+    b.innerHTML = `<span></span><span class="cnt"></span>`;
+    b.firstChild.textContent = name;
+    b.onclick = () => show(tid);
+    nav.appendChild(b);
+
+    const sec = document.createElement('section');
+    sec.className = 'tab'; sec.id = 'tab-' + tid; sec.hidden = true;
+    sec.innerHTML = `<h2></h2><p class="lead"></p><div class="fields"></div><div class="pager"></div>`;
+    sec.querySelector('h2').textContent = name;
+    sec.querySelector('.lead').textContent = lead;
+    const box = sec.querySelector('.fields');
+    for (const [key, label, kind, , note] of fs) {
+      const f = document.createElement('div');
+      f.className = 'f' + (kind === 'long' || (kind === 'text' && /ten_doan_the|nhan/.test(key)) ? ' wide' : '');
+      f.id = 'f-' + key;
+      const lab = document.createElement('label');
+      lab.htmlFor = 'in-' + key; lab.textContent = label;
+      const inp = document.createElement(kind === 'long' ? 'textarea' : 'input');
+      inp.id = 'in-' + key; inp.name = key;
+      if (kind !== 'long') inp.type = 'text';
+      if (kind === 'int') { inp.inputMode = 'numeric'; inp.placeholder = 'số'; }
+      if (kind === 'date') { inp.inputMode = 'numeric'; inp.placeholder = 'ngày/tháng/năm'; }
+      if (kind === 'long') inp.rows = 7;
+      inp.addEventListener('input', () => { data[key] = inp.value; f.classList.remove('bad'); onChange(key); });
+      const hint = document.createElement('div');
+      hint.className = 'hint'; hint.id = 'h-' + key; hint.dataset.note = note || '';
+      hint.textContent = note || '';
+      f.append(lab, inp, hint);
+      box.appendChild(f);
+    }
+    if (tid === 'chibo' || tid === 'dangu' || tid === 'doanthe') {
+      const cb = document.createElement('div');
+      cb.className = 'calcbox'; cb.id = 'calc-' + tid;
+      box.appendChild(cb);
+    }
+    const pager = sec.querySelector('.pager');
+    const prev = TABS[i - 1], next = TABS[i + 1];
+    if (prev) { const p = document.createElement('button'); p.className = 'btn ghost small'; p.type = 'button'; p.textContent = '← ' + prev[1]; p.onclick = () => show(prev[0]); pager.appendChild(p); }
+    else pager.appendChild(document.createElement('span'));
+    if (next) { const p = document.createElement('button'); p.className = 'btn small'; p.type = 'button'; p.textContent = next[1] + ' →'; p.onclick = () => show(next[0]); pager.appendChild(p); }
+    main.appendChild(sec);
+  });
+
+  const ul = $('mauList');
+  for (const [key, code, name] of MAU) {
+    const li = document.createElement('li');
+    li.innerHTML = `<div><div class="t"></div><div class="s" id="st-${key}"></div></div>`;
+    li.querySelector('.t').textContent = `${code} · ${name}`;
+    const b = document.createElement('button');
+    b.className = 'btn ghost small dl'; b.type = 'button'; b.textContent = '.docx';
+    b.setAttribute('aria-label', 'Tải ' + code);
+    b.onclick = () => exportOne(key);
+    li.appendChild(b);
+    ul.appendChild(li);
+  }
+}
+
+function show(tid) {
+  current = tid;
+  document.querySelectorAll('section.tab').forEach(s => s.hidden = s.id !== 'tab-' + tid);
+  document.querySelectorAll('nav button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === tid ? 'true' : 'false'));
+}
+
+function fillInputs() {
+  for (const k in FIELDS) { const el = $('in-' + k); if (el) el.value = data[k] ?? ''; }
+  refresh();
+}
+
+function datePreview(key) {
+  const h = $('h-' + key);
+  try {
+    const p = parseDate(key, data[key]);
+    h.className = 'hint' + (p ? ' calc' : '');
+    h.textContent = p ? `In ra: ngày ${p[0]} tháng ${p[1]} năm ${p[2]}` : h.dataset.note;
+  } catch (e) { h.className = 'hint'; h.textContent = 'Nhập theo dạng ngày/tháng/năm, ví dụ 05/03/1998'; }
+}
+
+function calcBoxes() {
+  let c = null;
+  try { c = buildContext({ ...data, ho_ten: data.ho_ten || '_' }); } catch { }
+  const set = (id, html) => { const el = $(id); if (el) el.innerHTML = html; };
+  if (!c) { ['calc-chibo', 'calc-dangu', 'calc-doanthe'].forEach(id => set(id, 'Kiểm tra lại các ô số đang nhập.')); return; }
+  set('calc-doanthe', `Đoàn thể: tán thành <b>${c.dt_tan}/${c.dt_tong}</b> (${c.dt_pt}%) · Nơi cư trú: tán thành <b>${c.ct_tan}/${c.ct_tong}</b> (${c.ct_pt}%)`);
+  set('calc-chibo', `Chi bộ có <b>${c.tong_dv}</b> đảng viên, có mặt <b>${c.cm_tong}</b> (chính thức ${c.cm_ct}, dự bị ${c.cm_db}).<br>Tán thành <b>${c.cb_tan}</b>/${c.dv_ct} chính thức = <b>${c.cb_pt}%</b> · không tán thành ${c.cb_khong} (${c.cb_kpt}%)`);
+  set('calc-dangu', `BCH có <b>${c.uv_tong}</b> ủy viên, có mặt <b>${c.uv_cm}</b>.<br>Đồng ý <b>${c.du_dy}</b>/${c.uv_tong} = <b>${c.du_pt}%</b> · không đồng ý ${c.du_kdy} (${c.du_kpt}%)`);
+}
+
+function refresh() {
+  for (const k in FIELDS) if (FIELDS[k].kind === 'date') datePreview(k);
+  calcBoxes();
+  TABS.forEach(([tid, , , fs]) => {
+    const filled = fs.filter(f => String(data[f[0]] ?? '').trim()).length;
+    const b = document.querySelector(`nav button[data-tab="${tid}"] .cnt`);
+    if (b) b.textContent = `${filled}/${fs.length}`;
+  });
+  for (const [key, , , need] of MAU) {
+    const miss = need.filter(k => !String(data[k] ?? '').trim()).length;
+    const el = $('st-' + key);
+    el.className = 's' + (miss ? ' miss' : '');
+    el.textContent = miss ? `Còn ${miss} ô chính để trống` : 'Đủ thông tin chính';
+  }
+}
+
+let saveTimer;
+function onChange(key) {
+  if (FIELDS[key].kind === 'date') datePreview(key);
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    store.set('kn_draft', data);
+    store.set('kn_donvi', Object.fromEntries(DON_VI_KEYS.map(k => [k, data[k]])));
+    refresh();
+  }, 250);
+}
+
+function showMsg(id, text, kind) { const el = $(id); el.hidden = !text; el.className = 'msg ' + (kind || ''); el.textContent = text || ''; }
+
+function ctxOrError() {
+  try { return buildContext(data); }
+  catch (e) {
+    if (!(e instanceof LoiNhap)) throw e;
+    showMsg('exportMsg', e.message, 'err');
+    if (e.key) { show(FIELDS[e.key].tab); const f = $('f-' + e.key); f.classList.add('bad'); $('in-' + e.key).focus(); }
+    return null;
+  }
+}
+
+let downloads = null;
+async function save(filename, bytes) {
+  if (!downloads) { showMsg('exportMsg', 'Trang đang mở ở chế độ không cho tải file. Hãy mở link này trên claude.ai để tải hồ sơ.', 'err'); return; }
+  try {
+    await downloads.save({ filename, data: bytes });
+    showMsg('exportMsg', `Đã tải ${filename}`, 'ok');
+  } catch (e) {
+    const msg = { declined: 'Bạn đã hủy tải file.', rate_limited: 'Đang có một hộp thoại tải file mở, hãy xử lý nó trước.' }[e && e.code];
+    showMsg('exportMsg', msg || 'Không tải được file ở chế độ xem này.', msg ? '' : 'err');
+  }
+}
+
+function exportOne(key) {
+  showMsg('exportMsg', '');
+  const ctx = ctxOrError(); if (!ctx) return;
+  const m = MAU.find(x => x[0] === key);
+  save(`${m[1]} ${m[2]} - ${tenFile(data.ho_ten)}.docx`, renderMau(key, ctx));
+}
+
+function exportZip() {
+  showMsg('exportMsg', '');
+  const ctx = ctxOrError(); if (!ctx) return;
+  const zip = new PizZip();
+  const ten = tenFile(data.ho_ten);
+  for (const [key, code, name] of MAU) zip.file(`${code} ${name}.docx`, renderMau(key, ctx));
+  zip.file('thong_tin.json', JSON.stringify(data, null, 2));
+  save(`Ho so ket nap - ${ten}.zip`, zip.generate({ type: 'uint8array', compression: 'DEFLATE' }));
+}
+
+const SAMPLE = {
+  chi_bo: 'Giáo viên 1', bt_chi_bo: 'Trần Văn Bình (ví dụ)', bt_dang_uy: 'Lê Thị Hoa (ví dụ)', dv_ct: '12', dv_db: '2', uv_tong: '7',
+  ho_ten: 'Nguyễn Văn An (ví dụ)', ngay_sinh: '05/03/1998', noi_sinh: 'Cần Thơ', que_quan: 'Nhơn Mỹ, Cần Thơ', cu_tru: 'Ấp Mỹ Hòa, xã Nhơn Mỹ',
+  chuc_vu: 'Giáo viên Toán', ngay_doan: '26/03/2013', doan_noi: 'Trường THPT Nhơn Mỹ', ngay_ctd: '10/01/2026', ngay_don: '01/09/2026',
+  gt_ten: 'Phạm Thị Lan (ví dụ)', gt_ns: '02/02/1985', gt_vd: '03/02/2010', gt_ct: '03/02/2011', gt_que: 'Cần Thơ', ngay_pc: '15/01/2026', ngay_gt_ky: '05/09/2026',
+  ngay_m5: '20/09/2026', ten_doan_the: 'Công đoàn, Chi đoàn giáo viên Trường THCS Nhơn Mỹ', so_dt: '4', ten_ct: 'Chi bộ ấp Mỹ Hòa', so_ct: '3',
+  so_nq_cb: '05', ngay_cb: '01/10/2026', vm_ct: '1', cb_lydo_vang: 'đi công tác', cb_thu_ky: 'Võ Minh Tâm (ví dụ)',
+  so_nq_du: '12', ngay_du: '15/10/2026', du_thu_ky: 'Đỗ Văn Khoa (ví dụ)',
+};
+
+function init() {
+  buildUI();
+  const draft = store.get('kn_draft');
+  const donvi = store.get('kn_donvi');
+  data = Object.assign(defaults(), donvi || {}, draft || {});
+  fillInputs();
+  show(donvi && donvi.chi_bo ? 'quanchung' : 'donvi');
+
+  $('btnZip').onclick = exportZip;
+  $('btnSaveJson').onclick = () => save(`Thong tin - ${tenFile(data.ho_ten || 'ho so')}.json`, JSON.stringify(data, null, 2));
+  $('btnOpenJson').onclick = () => $('fileJson').click();
+  $('fileJson').onchange = async e => {
+    const file = e.target.files[0]; e.target.value = '';
+    if (!file) return;
+    try {
+      const obj = JSON.parse(await file.text());
+      data = Object.assign(defaults(), obj);
+      fillInputs(); store.set('kn_draft', data);
+      showMsg('dataMsg', `Đã mở thông tin của ${data.ho_ten || 'hồ sơ'}.`, 'ok');
+    } catch { showMsg('dataMsg', 'File này không phải file thông tin hồ sơ (.json).', 'err'); }
+  };
+  $('btnNew').onclick = () => { $('newConfirm').hidden = false; };
+  $('btnNewNo').onclick = () => { $('newConfirm').hidden = true; };
+  $('btnNewYes').onclick = () => {
+    const keep = Object.fromEntries(DON_VI_KEYS.map(k => [k, data[k]]));
+    data = Object.assign(defaults(), keep);
+    fillInputs(); store.set('kn_draft', data);
+    $('newConfirm').hidden = true; show('quanchung');
+    showMsg('dataMsg', 'Đã tạo hồ sơ mới.', 'ok');
+  };
+  $('btnSample').onclick = () => {
+    data = Object.assign(defaults(), SAMPLE);
+    fillInputs(); store.set('kn_draft', data);
+    showMsg('dataMsg', 'Đã điền dữ liệu ví dụ. Bấm "Hồ sơ mới" để xóa.', 'ok');
+  };
+
+  const dls = document.querySelectorAll('#btnZip, .dl, #btnSaveJson');
+  dls.forEach(b => b.disabled = true);
+  if (window.claude && window.claude.use) {
+    window.claude.use('downloads').then(d => {
+      downloads = d;
+      dls.forEach(b => b.disabled = false);
+      if (!d) showMsg('exportMsg', 'Chế độ xem này không cho tải file. Hãy mở link trên claude.ai.', 'err');
+    });
+  } else {
+    dls.forEach(b => b.disabled = false);
+  }
+}
+window.__test = { buildContext, renderMau };
+init();
+</script>

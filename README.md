@@ -20,11 +20,17 @@ pip install -r requirements.txt
 
 Số liệu, tỷ lệ % tự tính; ô bỏ trống giữ dấu "……" để viết tay.
 
+## Bản online
+
+`web/index.html` là bản chạy trên trình duyệt (đã đăng tại https://claude.ai/artifact/75KXCyc32X96DLvaM24sFt, chế độ riêng tư).
+Sau khi sửa mẫu trong `tool/mau/`, chạy `python tool/build_web.py` để tạo lại `web/mau_data.js`.
+
 ## Cấu trúc
 
 - `*.doc` – mẫu gốc.
 - `tool/goc/` – mẫu gốc chuyển sang .docx.
 - `tool/mau/` – mẫu có trường điền `{{ ... }}`, sinh bởi `tool/build_templates.py`.
 - `tool/ket_nap.py` – giao diện nhập liệu và xuất hồ sơ.
+- `tool/build_web.py`, `web/` – bản online.
 
 Thư mục `HoSo/` và `tool/don_vi.json` chứa thông tin cá nhân nên không được đưa lên GitHub.

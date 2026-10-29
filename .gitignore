@@ -5,3 +5,6 @@ tool/don_vi.json
 __pycache__/
 *.pyc
 ~$*
+
+# Cấu hình chạy thử trên máy
+.claude/
