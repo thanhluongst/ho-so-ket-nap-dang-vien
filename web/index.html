@@ -148,6 +148,16 @@ input[type=file] { display: none; }
         <p class="note">Ô nào để trống sẽ giữ dấu "……" trên mẫu để viết tay. Bỏ chọn tô đỏ trước khi in bản chính thức.</p>
       </div>
       <div class="card">
+        <h3>Nhập từ Excel</h3>
+        <p class="note">Điền thông tin vào file Excel mẫu (cột "Nội dung nhập"), lưu lại rồi nhập lên đây. Các mục sẽ tự điền vào biểu mẫu.</p>
+        <div class="row">
+          <button class="btn ghost small" id="btnExcelMau" type="button">Tải file Excel mẫu</button>
+          <button class="btn small" id="btnExcelNhap" type="button">Nhập file Excel</button>
+          <input type="file" id="fileExcel" accept=".xlsx">
+        </div>
+        <div id="excelMsg" class="msg" hidden></div>
+      </div>
+      <div class="card">
         <h3>Thông tin đã nhập</h3>
         <p class="note">Trình duyệt tự nhớ bản đang nhập. Muốn lưu lâu dài hoặc chuyển máy, hãy tải file thông tin về.</p>
         <div class="row">
@@ -173,6 +183,7 @@ input[type=file] { display: none; }
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.47.4/docxtemplater.js"></script>
 <script src="mau_data.js"></script>
 <script>
@@ -400,6 +411,30 @@ function buildContext(data) {
   const uu = lines(v.uu_diem), kd = lines(v.khuyet_diem);
   c.uu_kd = ['* Ưu điểm:', ...gach(uu.length ? uu : [TRONG.repeat(6)]), '* Khuyết điểm:', ...gach(kd.length ? kd : [TRONG.repeat(6)])];
   return c;
+}
+
+// ---------- đọc file Excel mẫu: cột "Mã" là khóa, cột "Nội dung nhập" là giá trị
+function docExcel(buf) {
+  const wb = XLSX.read(buf, { type: 'array' });
+  const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, raw: true, defval: null });
+  const h = rows.findIndex(r => r.some(x => String(x ?? '').trim() === 'Mã') && r.some(x => String(x ?? '').trim() === 'Nội dung nhập'));
+  if (h < 0) throw new LoiNhap('File Excel không đúng mẫu: thiếu cột "Mã" hoặc "Nội dung nhập". Hãy tải file Excel mẫu và điền vào đó.');
+  const ck = rows[h].findIndex(x => String(x ?? '').trim() === 'Mã');
+  const cv = rows[h].findIndex(x => String(x ?? '').trim() === 'Nội dung nhập');
+  const out = {};
+  for (const r of rows.slice(h + 1)) {
+    const key = String(r[ck] ?? '').trim();
+    if (!FIELDS[key]) continue;
+    let v = r[cv];
+    if (typeof v === 'number' && FIELDS[key].kind === 'date') {   // ô ngày kiểu Date của Excel
+      const d = XLSX.SSF.parse_date_code(v);
+      v = `${String(d.d).padStart(2, '0')}/${String(d.m).padStart(2, '0')}/${d.y}`;
+    }
+    v = v == null ? '' : String(typeof v === 'number' ? Math.round(v) : v).trim();
+    const preset = (MAU_NX[key] || []).find(m => m.ten === v);   // chọn tên mẫu nhận xét -> nội dung mẫu
+    out[key] = preset ? preset.noi_dung : v;
+  }
+  return out;
 }
 
 // ---------- tạo file Word
@@ -647,6 +682,24 @@ function init() {
       showMsg('dataMsg', `Đã mở thông tin của ${data.ho_ten || 'hồ sơ'}.`, 'ok');
     } catch { showMsg('dataMsg', 'File này không phải file thông tin hồ sơ (.json).', 'err'); }
   };
+  $('btnExcelMau').onclick = () => {
+    showMsg('excelMsg', '');
+    save('Mau nhap thong tin.xlsx', b64ToBytes(window.MAU_EXCEL));
+  };
+  $('btnExcelNhap').onclick = () => $('fileExcel').click();
+  $('fileExcel').onchange = async e => {
+    const file = e.target.files[0]; e.target.value = '';
+    if (!file) return;
+    try {
+      const obj = docExcel(await file.arrayBuffer());
+      data = Object.assign(defaults(), obj);
+      fillInputs(); store.set('kn_draft', data);
+      show('quanchung');
+      showMsg('excelMsg', `Đã nhập ${Object.keys(obj).length} mục từ ${file.name}. Kiểm tra lại các tab rồi tải hồ sơ.`, 'ok');
+    } catch (err) {
+      showMsg('excelMsg', err instanceof LoiNhap ? err.message : 'Không đọc được file. Hãy dùng đúng file Excel mẫu (.xlsx).', 'err');
+    }
+  };
   $('btnNew').onclick = () => { $('newConfirm').hidden = false; };
   $('btnNewNo').onclick = () => { $('newConfirm').hidden = true; };
   $('btnNewYes').onclick = () => {
@@ -662,7 +715,7 @@ function init() {
     showMsg('dataMsg', 'Đã điền dữ liệu ví dụ. Bấm "Hồ sơ mới" để xóa.', 'ok');
   };
 
-  const dls = document.querySelectorAll('#btnZip, .dl, #btnSaveJson');
+  const dls = document.querySelectorAll('#btnZip, .dl, #btnSaveJson, #btnExcelMau');
   dls.forEach(b => b.disabled = true);
   if (window.claude && window.claude.use) {
     window.claude.use('downloads').then(d => {

@@ -42,7 +42,9 @@ for folder, suffix in (('mau', ''), ('mau_do', '_do')):
 OUT.parent.mkdir(exist_ok=True)
 nhan_xet = json.loads((HERE / 'mau_nhan_xet.json').read_text(encoding='utf-8'))
 OUT.write_text('window.MAU_DATA = ' + json.dumps(data) + ';\n'
-               + 'window.MAU_NX = ' + json.dumps(nhan_xet, ensure_ascii=False) + ';\n', encoding='utf-8')
+               + 'window.MAU_NX = ' + json.dumps(nhan_xet, ensure_ascii=False) + ';\n'
+               + 'window.MAU_EXCEL = "' + base64.b64encode((HERE.parent / 'Mau nhap thong tin.xlsx').read_bytes()).decode()
+               + '";\n', encoding='utf-8')
 print('Đã tạo', OUT, OUT.stat().st_size // 1024, 'KB')
 
 # Bản cho GitHub Pages (thư mục docs/): thêm khung HTML mà claude.ai tự bọc khi đăng

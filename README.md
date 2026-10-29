@@ -20,6 +20,12 @@ pip install -r requirements.txt
 
 Số liệu, tỷ lệ % tự tính; ô bỏ trống giữ dấu "……" để viết tay.
 
+### Nhập bằng file Excel
+
+Điền thông tin vào `Mau nhap thong tin.xlsx` (cột "Nội dung nhập"; các ô nhận xét có danh sách chọn mẫu),
+rồi bấm **Nhập từ Excel** trên tool hoặc **Nhập file Excel** trên bản online. File mẫu cũng tải được ngay trên trang online.
+Tạo lại file mẫu bằng `python tool/build_excel.py` (sau đó chạy `python tool/build_web.py`).
+
 ## Bản online
 
 Dùng online: **https://thanhluongst.github.io/ho-so-ket-nap-dang-vien/** (GitHub Pages, từ thư mục `docs/`).

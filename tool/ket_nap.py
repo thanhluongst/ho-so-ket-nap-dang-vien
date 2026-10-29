@@ -291,6 +291,36 @@ def luu_json(path, data):
     Path(path).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
 
 
+def doc_excel(path):
+    """Đọc file "Mau nhap thong tin.xlsx": cột "Mã" là khóa, cột "Nội dung nhập" là giá trị."""
+    from openpyxl import load_workbook
+    ws = load_workbook(path, data_only=True).worksheets[0]
+    rows = list(ws.iter_rows(values_only=True))
+    for h, header in enumerate(rows):
+        cells = [str(x or '').strip() for x in header]
+        if 'Mã' in cells and 'Nội dung nhập' in cells:
+            ck, cv = cells.index('Mã'), cells.index('Nội dung nhập')
+            break
+    else:
+        raise LoiNhap('File Excel không đúng mẫu: thiếu cột "Mã" hoặc "Nội dung nhập".')
+    data = {}
+    for r in rows[h + 1:]:
+        key = str(r[ck] or '').strip() if ck < len(r) else ''
+        if key not in FIELDS:
+            continue
+        val = r[cv] if cv < len(r) else None
+        if isinstance(val, (datetime.date, datetime.datetime)):
+            val = val.strftime('%d/%m/%Y')
+        elif isinstance(val, float) and val.is_integer():
+            val = str(int(val))
+        val = '' if val is None else str(val).strip()
+        for m in MAU_NX.get(key, []):   # chọn tên mẫu nhận xét -> lấy nội dung mẫu
+            if val == m['ten']:
+                val = m['noi_dung']
+        data[key] = val
+    return data
+
+
 def doc_json(path):
     try:
         return json.loads(Path(path).read_text(encoding='utf-8'))
@@ -399,6 +429,24 @@ def chay_giao_dien():
             data.update(doc_json(f))
             set_data(data)
 
+    def nhap_excel():
+        f = filedialog.askopenfilename(initialdir=HERE.parent, title='Chọn file Excel thông tin',
+                                       filetypes=[('Excel', '*.xlsx')])
+        if not f:
+            return
+        try:
+            data = defaults()
+            data.update(doc_excel(f))
+        except LoiNhap as e:
+            messagebox.showwarning('Không đọc được file', str(e))
+            return
+        except Exception as e:
+            messagebox.showerror('Không đọc được file', f'Hãy đóng file trong Excel rồi thử lại.\n{e}')
+            return
+        set_data(data)
+        nb.select(1)
+        status.set(f'Đã nhập thông tin từ {Path(f).name}. Kiểm tra lại rồi bấm XUẤT.')
+
     def luu():
         data = get_data()
         if not data['ho_ten']:
@@ -426,6 +474,7 @@ def chay_giao_dien():
     bar = ttk.Frame(root, padding=8)
     bar.pack(fill='x')
     ttk.Button(bar, text='Hồ sơ mới', command=ho_so_moi).pack(side='left')
+    ttk.Button(bar, text='Nhập từ Excel...', command=nhap_excel).pack(side='left', padx=(6, 0))
     ttk.Button(bar, text='Mở hồ sơ...', command=mo_ho_so).pack(side='left', padx=6)
     ttk.Button(bar, text='Lưu thông tin', command=luu).pack(side='left')
     ttk.Button(bar, text='XUẤT 5 MẪU WORD', command=xuat).pack(side='right')
@@ -440,9 +489,9 @@ def chay_giao_dien():
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1:  # chạy không giao diện: python ket_nap.py thong_tin.json
+    if len(sys.argv) > 1:  # chạy không giao diện: python ket_nap.py thong_tin.json|.xlsx [thư mục]
         d = defaults()
-        d.update(doc_json(sys.argv[1]))
+        d.update(doc_excel(sys.argv[1]) if sys.argv[1].lower().endswith('.xlsx') else doc_json(sys.argv[1]))
         print('Đã xuất vào', xuat_ho_so(d, sys.argv[2] if len(sys.argv) > 2 else None))
     else:
         chay_giao_dien()
