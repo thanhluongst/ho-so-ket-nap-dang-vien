@@ -1,0 +1,7 @@
+# Hồ sơ cá nhân và cấu hình đơn vị: không đưa lên GitHub
+HoSo/
+tool/don_vi.json
+
+__pycache__/
+*.pyc
+~$*
