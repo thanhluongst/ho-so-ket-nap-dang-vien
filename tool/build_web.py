@@ -39,3 +39,16 @@ nhan_xet = json.loads((HERE / 'mau_nhan_xet.json').read_text(encoding='utf-8'))
 OUT.write_text('window.MAU_DATA = ' + json.dumps(data) + ';\n'
                + 'window.MAU_NX = ' + json.dumps(nhan_xet, ensure_ascii=False) + ';\n', encoding='utf-8')
 print('Đã tạo', OUT, OUT.stat().st_size // 1024, 'KB')
+
+# Bản cho GitHub Pages (thư mục docs/): thêm khung HTML mà claude.ai tự bọc khi đăng
+DOCS = HERE.parent / 'docs'
+DOCS.mkdir(exist_ok=True)
+page = (OUT.parent / 'index.html').read_text(encoding='utf-8').replace('<meta charset="utf-8">\n', '', 1)
+(DOCS / 'index.html').write_text(
+    '<!doctype html>\n<html lang="vi">\n<head>\n<meta charset="utf-8">\n'
+    '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
+    '<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}'
+    'body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>\n</head>\n<body>\n'
+    + page + '\n</body>\n</html>\n', encoding='utf-8')
+(DOCS / 'mau_data.js').write_bytes(OUT.read_bytes())
+print('Đã tạo', DOCS / 'index.html')

@@ -573,7 +573,16 @@ function ctxOrError() {
 
 let downloads = null;
 async function save(filename, bytes) {
-  if (!downloads) { showMsg('exportMsg', 'Trang đang mở ở chế độ không cho tải file. Hãy mở link này trên claude.ai để tải hồ sơ.', 'err'); return; }
+  if (!downloads) {  // chạy ngoài claude.ai (GitHub Pages, mở file trực tiếp): tải bằng link thường
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([bytes]));
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    showMsg('exportMsg', `Đã tải ${filename}`, 'ok');
+    return;
+  }
   try {
     await downloads.save({ filename, data: bytes });
     showMsg('exportMsg', `Đã tải ${filename}`, 'ok');
@@ -652,7 +661,6 @@ function init() {
     window.claude.use('downloads').then(d => {
       downloads = d;
       dls.forEach(b => b.disabled = false);
-      if (!d) showMsg('exportMsg', 'Chế độ xem này không cho tải file. Hãy mở link trên claude.ai.', 'err');
     });
   } else {
     dls.forEach(b => b.disabled = false);

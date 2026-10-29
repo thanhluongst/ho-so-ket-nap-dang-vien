@@ -22,8 +22,11 @@ Số liệu, tỷ lệ % tự tính; ô bỏ trống giữ dấu "……" để 
 
 ## Bản online
 
-`web/index.html` là bản chạy trên trình duyệt (đã đăng tại https://claude.ai/artifact/75KXCyc32X96DLvaM24sFt, chế độ riêng tư).
-Sau khi sửa mẫu trong `tool/mau/`, chạy `python tool/build_web.py` để tạo lại `web/mau_data.js`.
+Dùng online: **https://thanhluongst.github.io/ho-so-ket-nap-dang-vien/** (GitHub Pages, từ thư mục `docs/`).
+
+`web/index.html` là mã nguồn trang. Sau khi sửa trang, mẫu trong `tool/mau/` hoặc `tool/mau_nhan_xet.json`,
+chạy `python tool/build_web.py` để tạo lại `web/` và `docs/`, rồi commit và push.
+Thông tin nhập trên trang chỉ nằm trong trình duyệt, không gửi đi đâu.
 
 ## Cấu trúc
 
