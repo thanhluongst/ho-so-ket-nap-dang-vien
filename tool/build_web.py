@@ -35,5 +35,7 @@ for f in sorted((HERE / 'mau').glob('mau*.docx')):
     data[f.stem] = base64.b64encode(buf.getvalue()).decode()
 
 OUT.parent.mkdir(exist_ok=True)
-OUT.write_text('window.MAU_DATA = ' + json.dumps(data) + ';\n', encoding='utf-8')
+nhan_xet = json.loads((HERE / 'mau_nhan_xet.json').read_text(encoding='utf-8'))
+OUT.write_text('window.MAU_DATA = ' + json.dumps(data) + ';\n'
+               + 'window.MAU_NX = ' + json.dumps(nhan_xet, ensure_ascii=False) + ';\n', encoding='utf-8')
 print('Đã tạo', OUT, OUT.stat().st_size // 1024, 'KB')

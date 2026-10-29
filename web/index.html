@@ -102,6 +102,12 @@ button.btn:disabled { opacity: .45; cursor: not-allowed; }
 .msg.ok { color: var(--ok); }
 .note { font-size: 12.5px; color: var(--muted); margin: 0; }
 input[type=file] { display: none; }
+.preset { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.preset select {
+  font: inherit; font-size: 14px; color: var(--fg); background: var(--bg); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 4px 8px; flex: 1 1 220px; min-width: 0;
+}
+.preset select:focus-visible { outline: 2px solid var(--accent); outline-offset: -1px; }
 
 @media (max-width: 1000px) {
   .grid { grid-template-columns: minmax(0, 1fr); }
@@ -169,17 +175,15 @@ input[type=file] { display: none; }
 <script>
 const TRONG = '……………', TRONG_NGAY = '……';
 
-const NHAN_THUC = `Đảng Cộng sản Việt Nam là đội tiên phong của giai cấp công nhân, đồng thời là đội tiên phong của nhân dân lao động và của dân tộc Việt Nam; đại biểu trung thành lợi ích của giai cấp công nhân, nhân dân lao động và của dân tộc.
-Đảng lấy chủ nghĩa Mác - Lênin và tư tưởng Hồ Chí Minh làm nền tảng tư tưởng, kim chỉ nam cho hành động, lấy tập trung dân chủ làm nguyên tắc tổ chức cơ bản.
-Mục đích của Đảng là xây dựng nước Việt Nam độc lập, dân chủ, giàu mạnh, xã hội công bằng, văn minh, không còn người bóc lột người, thực hiện thành công chủ nghĩa xã hội và cuối cùng là chủ nghĩa cộng sản.
-Đảng viên Đảng Cộng sản Việt Nam là chiến sĩ cách mạng trong đội tiên phong của giai cấp công nhân, nhân dân lao động và dân tộc Việt Nam, suốt đời phấn đấu cho mục đích, lý tưởng của Đảng, đặt lợi ích của Tổ quốc, của giai cấp công nhân và nhân dân lao động lên trên lợi ích cá nhân; chấp hành nghiêm chỉnh Cương lĩnh chính trị, Điều lệ Đảng, các nghị quyết của Đảng và pháp luật của Nhà nước.
-Từ những nhận thức trên, tôi tự nguyện làm đơn này, đề nghị Chi bộ, Đảng ủy xem xét, kết nạp tôi vào Đảng Cộng sản Việt Nam. Nếu được đứng trong hàng ngũ của Đảng, tôi xin hứa luôn chấp hành nghiêm Cương lĩnh, Điều lệ Đảng, chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước; không ngừng học tập, rèn luyện, nâng cao trình độ chuyên môn và phẩm chất đạo đức; tích cực tham gia công tác quần chúng, giữ gìn sự đoàn kết thống nhất trong Đảng.`;
-const LY_LICH = `Lý lịch rõ ràng. Bản thân và gia đình chấp hành tốt chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước; không vi phạm về lịch sử chính trị và chính trị hiện nay theo quy định.`;
-const UU_DIEM = `Có lập trường tư tưởng chính trị vững vàng; chấp hành tốt chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước và nội quy, quy chế của cơ quan.
-Có phẩm chất đạo đức tốt, lối sống giản dị, lành mạnh; có tinh thần trách nhiệm trong công việc.
-Có năng lực chuyên môn, hoàn thành tốt nhiệm vụ được giao; tích cực học tập, bồi dưỡng nâng cao trình độ.
-Có mối quan hệ tốt với đồng nghiệp, học sinh và nhân dân nơi cư trú; được quần chúng tín nhiệm.`;
-const KHUYET_DIEM = `Kinh nghiệm công tác còn hạn chế, cần tiếp tục học tập, rèn luyện thêm.`;
+// Mẫu nhận xét gợi ý lấy từ tool/mau_nhan_xet.json (qua mau_data.js); mẫu đầu tiên là mặc định
+const MAU_NX = window.MAU_NX;
+const NX_KEYS = ['nhan_thuc', 'ly_lich', 'uu_diem', 'khuyet_diem'];
+const [NHAN_THUC, LY_LICH, UU_DIEM, KHUYET_DIEM] = NX_KEYS.map(k => MAU_NX[k][0].noi_dung);
+function thayThe(text, v) {
+  const vals = { ten: v.ho_ten || '', nghe: (v.nghe_nghiep || '').toLowerCase(), chuc_vu: (v.chuc_vu || '').toLowerCase(),
+    don_vi: v.don_vi || '', chi_bo: v.chi_bo || '' };
+  return text.replace(/\{(\w+)\}/g, (m, k) => vals[k] || m);
+}
 
 // [khóa, nhãn, kiểu, mặc định, ghi chú] — kiểu: text | date | int | long
 const TABS = [
@@ -257,7 +261,7 @@ const TABS = [
     ['du_dy', 'Số ủy viên đồng ý', 'int', '', 'Để trống = tất cả có mặt'],
     ['du_lydo_khong', 'Lý do không đồng ý', 'text', '', ''],
   ]],
-  ['nhanxet', 'Nhận xét', 'Nội dung gợi ý sẵn, hãy sửa cho đúng từng người. Mỗi dòng là một đoạn trên mẫu.', [
+  ['nhanxet', 'Nhận xét', 'Chọn mẫu rồi bấm "Thay" hoặc "Thêm vào"; tên, nghề nghiệp, chức vụ tự điền theo thông tin đã nhập. Mỗi dòng là một đoạn trên mẫu, hãy sửa cho đúng từng người.', [
     ['nhan_thuc', 'Nhận thức về Đảng (Mẫu 1, người làm đơn tự viết)', 'long', NHAN_THUC, ''],
     ['ly_lich', 'Về lý lịch (Mẫu 3, 6, 8)', 'long', LY_LICH, ''],
     ['uu_diem', 'Ưu điểm (Mẫu 3, 5, 6, 8)', 'long', UU_DIEM, ''],
@@ -386,6 +390,7 @@ function buildContext(data) {
     du_lydo_khong: lyDo(duKdy, v.du_lydo_khong),
   });
 
+  for (const k of NX_KEYS) v[k] = thayThe(v[k], v).replace(/\{\w+\}/g, TRONG);
   const gach = xs => xs.map(x => /^[-+*]/.test(x) ? x : `- ${x}`);
   c.nhan_thuc = lines(v.nhan_thuc).length ? lines(v.nhan_thuc) : [TRONG.repeat(6)];
   c.ly_lich = lines(v.ly_lich).length ? lines(v.ly_lich) : [TRONG.repeat(6)];
@@ -443,7 +448,9 @@ function buildUI() {
       const hint = document.createElement('div');
       hint.className = 'hint'; hint.id = 'h-' + key; hint.dataset.note = note || '';
       hint.textContent = note || '';
-      f.append(lab, inp, hint);
+      f.append(lab);
+      if (MAU_NX[key]) f.append(presetRow(key, inp));
+      f.append(inp, hint);
       box.appendChild(f);
     }
     if (tid === 'chibo' || tid === 'dangu' || tid === 'doanthe') {
@@ -471,6 +478,28 @@ function buildUI() {
     li.appendChild(b);
     ul.appendChild(li);
   }
+}
+
+function presetRow(key, inp) {
+  const row = document.createElement('div');
+  row.className = 'preset';
+  const sel = document.createElement('select');
+  sel.id = 'mx-' + key;
+  sel.setAttribute('aria-label', 'Chọn mẫu nhận xét');
+  MAU_NX[key].forEach((m, i) => sel.add(new Option(m.ten, i)));
+  const apply = mode => {
+    const text = thayThe(MAU_NX[key][sel.value].noi_dung, data);
+    inp.value = mode === 'them' && inp.value.trim() ? inp.value.replace(/\s+$/, '') + '\n' + text : text;
+    inp.dispatchEvent(new Event('input'));
+  };
+  const b1 = document.createElement('button');
+  b1.type = 'button'; b1.className = 'btn small'; b1.textContent = 'Thay';
+  b1.title = 'Thay toàn bộ nội dung bằng mẫu đã chọn'; b1.onclick = () => apply('thay');
+  const b2 = document.createElement('button');
+  b2.type = 'button'; b2.className = 'btn ghost small'; b2.textContent = 'Thêm vào';
+  b2.title = 'Nối mẫu đã chọn vào cuối nội dung'; b2.onclick = () => apply('them');
+  row.append(sel, b1, b2);
+  return row;
 }
 
 function show(tid) {

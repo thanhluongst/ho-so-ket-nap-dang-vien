@@ -1,0 +1,83 @@
+{
+  "_ghi_chu": "Mẫu nhận xét gợi ý. Có thể dùng {ten} (họ tên), {nghe} (nghề nghiệp), {chuc_vu}, {don_vi}, {chi_bo}: tool tự thay bằng thông tin đã nhập. Mỗi dòng là một đoạn trên mẫu Word.",
+  "nhan_thuc": [
+    {
+      "ten": "Đầy đủ theo Điều lệ Đảng",
+      "noi_dung": "Đảng Cộng sản Việt Nam là đội tiên phong của giai cấp công nhân, đồng thời là đội tiên phong của nhân dân lao động và của dân tộc Việt Nam; đại biểu trung thành lợi ích của giai cấp công nhân, nhân dân lao động và của dân tộc.\nĐảng lấy chủ nghĩa Mác - Lênin và tư tưởng Hồ Chí Minh làm nền tảng tư tưởng, kim chỉ nam cho hành động, lấy tập trung dân chủ làm nguyên tắc tổ chức cơ bản.\nMục đích của Đảng là xây dựng nước Việt Nam độc lập, dân chủ, giàu mạnh, xã hội công bằng, văn minh, không còn người bóc lột người, thực hiện thành công chủ nghĩa xã hội và cuối cùng là chủ nghĩa cộng sản.\nĐảng viên Đảng Cộng sản Việt Nam là chiến sĩ cách mạng trong đội tiên phong của giai cấp công nhân, nhân dân lao động và dân tộc Việt Nam, suốt đời phấn đấu cho mục đích, lý tưởng của Đảng, đặt lợi ích của Tổ quốc, của giai cấp công nhân và nhân dân lao động lên trên lợi ích cá nhân; chấp hành nghiêm chỉnh Cương lĩnh chính trị, Điều lệ Đảng, các nghị quyết của Đảng và pháp luật của Nhà nước.\nTừ những nhận thức trên, tôi tự nguyện làm đơn này, đề nghị Chi bộ, Đảng ủy xem xét, kết nạp tôi vào Đảng Cộng sản Việt Nam. Nếu được đứng trong hàng ngũ của Đảng, tôi xin hứa luôn chấp hành nghiêm Cương lĩnh, Điều lệ Đảng, chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước; không ngừng học tập, rèn luyện, nâng cao trình độ chuyên môn và phẩm chất đạo đức; tích cực tham gia công tác quần chúng, giữ gìn sự đoàn kết thống nhất trong Đảng."
+    },
+    {
+      "ten": "Ngắn gọn",
+      "noi_dung": "Đảng Cộng sản Việt Nam là đội tiên phong của giai cấp công nhân, đồng thời là đội tiên phong của nhân dân lao động và của dân tộc Việt Nam; lấy chủ nghĩa Mác - Lênin và tư tưởng Hồ Chí Minh làm nền tảng tư tưởng, kim chỉ nam cho hành động.\nMục đích của Đảng là xây dựng nước Việt Nam độc lập, dân chủ, giàu mạnh, xã hội công bằng, văn minh, thực hiện thành công chủ nghĩa xã hội và cuối cùng là chủ nghĩa cộng sản.\nVì vậy, tôi tự nguyện làm đơn xin vào Đảng. Nếu được kết nạp, tôi xin hứa chấp hành nghiêm Cương lĩnh, Điều lệ Đảng, chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước; không ngừng học tập, rèn luyện, hoàn thành tốt nhiệm vụ được giao."
+    },
+    {
+      "ten": "Gắn với nhiệm vụ nhà giáo",
+      "noi_dung": "Đảng Cộng sản Việt Nam là đội tiên phong của giai cấp công nhân, đồng thời là đội tiên phong của nhân dân lao động và của dân tộc Việt Nam; đại biểu trung thành lợi ích của giai cấp công nhân, nhân dân lao động và của dân tộc.\nĐảng lấy chủ nghĩa Mác - Lênin và tư tưởng Hồ Chí Minh làm nền tảng tư tưởng, kim chỉ nam cho hành động, lấy tập trung dân chủ làm nguyên tắc tổ chức cơ bản. Mục đích của Đảng là xây dựng nước Việt Nam độc lập, dân chủ, giàu mạnh, xã hội công bằng, văn minh.\nĐảng luôn xác định giáo dục và đào tạo là quốc sách hàng đầu; nhà giáo giữ vai trò quyết định trong việc bảo đảm chất lượng giáo dục. Là một {nghe}, tôi nhận thức sâu sắc trách nhiệm của mình trong sự nghiệp trồng người.\nTừ những nhận thức trên, tôi tự nguyện làm đơn xin vào Đảng. Nếu được đứng trong hàng ngũ của Đảng, tôi xin hứa chấp hành nghiêm Cương lĩnh, Điều lệ Đảng, chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước; không ngừng học tập, nâng cao trình độ chuyên môn, nghiệp vụ, đổi mới phương pháp dạy học; gương mẫu trước học sinh, đồng nghiệp và nhân dân; tích cực tham gia công tác quần chúng, giữ gìn sự đoàn kết thống nhất trong Đảng."
+    }
+  ],
+  "ly_lich": [
+    {
+      "ten": "Rõ ràng, không vướng mắc",
+      "noi_dung": "Lý lịch rõ ràng. Bản thân và gia đình chấp hành tốt chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước; không vi phạm về lịch sử chính trị và chính trị hiện nay theo quy định."
+    },
+    {
+      "ten": "Gia đình có người là đảng viên",
+      "noi_dung": "Lý lịch rõ ràng. Gia đình có truyền thống cách mạng, có người thân là đảng viên; bản thân và gia đình luôn chấp hành tốt chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước và quy định của địa phương nơi cư trú.\nBản thân và các mối quan hệ gia đình không vi phạm về lịch sử chính trị và chính trị hiện nay theo quy định."
+    },
+    {
+      "ten": "Có người thân ở nước ngoài (đã thẩm tra)",
+      "noi_dung": "Lý lịch rõ ràng. Bản thân và gia đình chấp hành tốt chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước.\nCó người thân đang sinh sống ở nước ngoài; chi bộ đã thẩm tra, xác minh theo quy định, các mối quan hệ này không ảnh hưởng đến tiêu chuẩn chính trị của người vào Đảng."
+    },
+    {
+      "ten": "Bản thân hoặc gia đình theo tôn giáo",
+      "noi_dung": "Lý lịch rõ ràng. Bản thân và gia đình chấp hành tốt chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước; sinh hoạt tôn giáo đúng quy định của pháp luật, không mê tín dị đoan.\nBản thân đã nhận thức đầy đủ và thực hiện đúng quy định của Đảng đối với người có đạo vào Đảng; không vi phạm về lịch sử chính trị và chính trị hiện nay theo quy định."
+    }
+  ],
+  "uu_diem": [
+    {
+      "ten": "Giáo viên",
+      "noi_dung": "Có lập trường tư tưởng chính trị vững vàng; chấp hành tốt chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước và nội quy, quy chế của nhà trường.\nCó phẩm chất đạo đức tốt, lối sống giản dị, lành mạnh; yêu nghề, mến trẻ, có tinh thần trách nhiệm trong công việc.\nCó năng lực chuyên môn, hoàn thành tốt nhiệm vụ giảng dạy và các nhiệm vụ khác được giao; tích cực học tập, bồi dưỡng nâng cao trình độ, đổi mới phương pháp dạy học.\nCó mối quan hệ tốt với đồng nghiệp, học sinh, cha mẹ học sinh và nhân dân nơi cư trú; được quần chúng tín nhiệm."
+    },
+    {
+      "ten": "Giáo viên có thành tích nổi bật",
+      "noi_dung": "Có lập trường tư tưởng chính trị vững vàng, tin tưởng tuyệt đối vào sự lãnh đạo của Đảng; chấp hành nghiêm chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước và nội quy, quy chế của nhà trường.\nCó phẩm chất đạo đức tốt, lối sống trong sáng, giản dị; luôn gương mẫu trước học sinh và đồng nghiệp.\nCó năng lực chuyên môn vững vàng, nhiều năm liền hoàn thành xuất sắc nhiệm vụ; tích cực đổi mới phương pháp dạy học, ứng dụng công nghệ thông tin trong giảng dạy; có học sinh đạt giải trong các kỳ thi, được công nhận giáo viên dạy giỏi các cấp.\nNhiệt tình tham gia các phong trào thi đua, hoạt động của Công đoàn, Đoàn thanh niên; có mối quan hệ tốt với đồng nghiệp, cha mẹ học sinh và nhân dân nơi cư trú; được quần chúng tín nhiệm."
+    },
+    {
+      "ten": "Giáo viên chủ nhiệm",
+      "noi_dung": "Có lập trường tư tưởng chính trị vững vàng; chấp hành tốt chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước và nội quy, quy chế của nhà trường.\nCó phẩm chất đạo đức tốt, lối sống giản dị, lành mạnh; tận tụy, gần gũi, quan tâm đến học sinh.\nHoàn thành tốt nhiệm vụ giảng dạy và công tác chủ nhiệm; quản lý lớp nề nếp, phối hợp chặt chẽ với cha mẹ học sinh và các đoàn thể trong giáo dục học sinh; lớp chủ nhiệm đạt nhiều kết quả tốt trong học tập và rèn luyện.\nCó mối quan hệ tốt với đồng nghiệp, học sinh, cha mẹ học sinh và nhân dân nơi cư trú; được quần chúng tín nhiệm."
+    },
+    {
+      "ten": "Nhân viên (kế toán, văn thư, thư viện, thiết bị...)",
+      "noi_dung": "Có lập trường tư tưởng chính trị vững vàng; chấp hành tốt chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước và nội quy, quy chế của cơ quan.\nCó phẩm chất đạo đức tốt, lối sống giản dị, lành mạnh; trung thực, cẩn thận, có tinh thần trách nhiệm cao trong công việc.\nNắm vững chuyên môn, nghiệp vụ; hoàn thành tốt nhiệm vụ {chuc_vu} và các nhiệm vụ khác được giao; tích cực phục vụ tốt cho hoạt động dạy và học của nhà trường.\nCó tinh thần đoàn kết, hòa nhã với đồng nghiệp, học sinh và nhân dân nơi cư trú; được quần chúng tín nhiệm."
+    },
+    {
+      "ten": "Tổ trưởng chuyên môn / cán bộ quản lý",
+      "noi_dung": "Có lập trường tư tưởng chính trị vững vàng; chấp hành nghiêm chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước và nội quy, quy chế của nhà trường.\nCó phẩm chất đạo đức tốt, lối sống giản dị, gương mẫu; có ý thức tổ chức kỷ luật, tinh thần trách nhiệm cao.\nCó năng lực chuyên môn và năng lực quản lý, tổ chức thực hiện tốt nhiệm vụ {chuc_vu}; xây dựng kế hoạch, chỉ đạo sinh hoạt chuyên môn hiệu quả; hoàn thành tốt nhiệm vụ được giao.\nCó uy tín với đồng nghiệp, biết lắng nghe, phát huy dân chủ, giữ gìn đoàn kết nội bộ; có mối quan hệ tốt với nhân dân nơi cư trú; được quần chúng tín nhiệm."
+    },
+    {
+      "ten": "Đoàn viên trẻ, tích cực phong trào",
+      "noi_dung": "Có lập trường tư tưởng chính trị vững vàng; chấp hành tốt chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước và nội quy, quy chế của cơ quan.\nCó phẩm chất đạo đức tốt, lối sống lành mạnh; năng động, nhiệt tình, ham học hỏi, có tinh thần cầu tiến.\nHoàn thành tốt nhiệm vụ chuyên môn được giao; tích cực tham gia các hoạt động của Đoàn thanh niên, Công đoàn, các phong trào văn nghệ, thể dục thể thao, hoạt động tình nguyện.\nCó mối quan hệ tốt với đồng nghiệp, học sinh và nhân dân nơi cư trú; được quần chúng tín nhiệm."
+    }
+  ],
+  "khuyet_diem": [
+    {
+      "ten": "Kinh nghiệm còn hạn chế",
+      "noi_dung": "Kinh nghiệm công tác còn hạn chế, cần tiếp tục học tập, rèn luyện thêm."
+    },
+    {
+      "ten": "Chưa mạnh dạn góp ý",
+      "noi_dung": "Đôi lúc chưa mạnh dạn trong phát biểu, đóng góp ý kiến xây dựng tập thể; cần phát huy hơn nữa tinh thần phê bình và tự phê bình."
+    },
+    {
+      "ten": "Đổi mới phương pháp, ứng dụng CNTT",
+      "noi_dung": "Việc đổi mới phương pháp dạy học và ứng dụng công nghệ thông tin trong giảng dạy có lúc chưa thường xuyên; cần tích cực học hỏi đồng nghiệp để nâng cao hiệu quả công tác."
+    },
+    {
+      "ten": "Còn nóng vội trong xử lý công việc",
+      "noi_dung": "Đôi lúc còn nóng vội trong giải quyết công việc, cần rèn luyện tính kiên trì, bình tĩnh và cẩn trọng hơn."
+    },
+    {
+      "ten": "Chưa có khuyết điểm đáng kể",
+      "noi_dung": "Chưa có khuyết điểm gì đáng kể; cần tiếp tục học tập, rèn luyện, phát huy ưu điểm để sớm đủ điều kiện trở thành đảng viên."
+    }
+  ]
+}

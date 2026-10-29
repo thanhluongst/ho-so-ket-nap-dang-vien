@@ -17,20 +17,18 @@ DON_VI_FILE = HERE / 'don_vi.json'
 TRONG = '……………'        # chỗ trống khi chưa nhập, để có thể viết tay
 TRONG_NGAY = '……'
 
-NHAN_THUC = """Đảng Cộng sản Việt Nam là đội tiên phong của giai cấp công nhân, đồng thời là đội tiên phong của nhân dân lao động và của dân tộc Việt Nam; đại biểu trung thành lợi ích của giai cấp công nhân, nhân dân lao động và của dân tộc.
-Đảng lấy chủ nghĩa Mác - Lênin và tư tưởng Hồ Chí Minh làm nền tảng tư tưởng, kim chỉ nam cho hành động, lấy tập trung dân chủ làm nguyên tắc tổ chức cơ bản.
-Mục đích của Đảng là xây dựng nước Việt Nam độc lập, dân chủ, giàu mạnh, xã hội công bằng, văn minh, không còn người bóc lột người, thực hiện thành công chủ nghĩa xã hội và cuối cùng là chủ nghĩa cộng sản.
-Đảng viên Đảng Cộng sản Việt Nam là chiến sĩ cách mạng trong đội tiên phong của giai cấp công nhân, nhân dân lao động và dân tộc Việt Nam, suốt đời phấn đấu cho mục đích, lý tưởng của Đảng, đặt lợi ích của Tổ quốc, của giai cấp công nhân và nhân dân lao động lên trên lợi ích cá nhân; chấp hành nghiêm chỉnh Cương lĩnh chính trị, Điều lệ Đảng, các nghị quyết của Đảng và pháp luật của Nhà nước.
-Từ những nhận thức trên, tôi tự nguyện làm đơn này, đề nghị Chi bộ, Đảng ủy xem xét, kết nạp tôi vào Đảng Cộng sản Việt Nam. Nếu được đứng trong hàng ngũ của Đảng, tôi xin hứa luôn chấp hành nghiêm Cương lĩnh, Điều lệ Đảng, chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước; không ngừng học tập, rèn luyện, nâng cao trình độ chuyên môn và phẩm chất đạo đức; tích cực tham gia công tác quần chúng, giữ gìn sự đoàn kết thống nhất trong Đảng."""
+# Mẫu nhận xét gợi ý (sửa/thêm trong mau_nhan_xet.json); mẫu đầu tiên là mặc định
+MAU_NX = json.loads((HERE / 'mau_nhan_xet.json').read_text(encoding='utf-8'))
+NX_KEYS = ['nhan_thuc', 'ly_lich', 'uu_diem', 'khuyet_diem']
+NHAN_THUC, LY_LICH, UU_DIEM, KHUYET_DIEM = (MAU_NX[k][0]['noi_dung'] for k in NX_KEYS)
 
-LY_LICH = """Lý lịch rõ ràng. Bản thân và gia đình chấp hành tốt chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước; không vi phạm về lịch sử chính trị và chính trị hiện nay theo quy định."""
 
-UU_DIEM = """Có lập trường tư tưởng chính trị vững vàng; chấp hành tốt chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước và nội quy, quy chế của cơ quan.
-Có phẩm chất đạo đức tốt, lối sống giản dị, lành mạnh; có tinh thần trách nhiệm trong công việc.
-Có năng lực chuyên môn, hoàn thành tốt nhiệm vụ được giao; tích cực học tập, bồi dưỡng nâng cao trình độ.
-Có mối quan hệ tốt với đồng nghiệp, học sinh và nhân dân nơi cư trú; được quần chúng tín nhiệm."""
+def thay_the(text, v):
+    """Thay {ten}, {nghe}, {chuc_vu}, {don_vi}, {chi_bo} bằng thông tin đã nhập (bỏ qua ô chưa nhập)."""
+    vals = {'ten': v.get('ho_ten', ''), 'nghe': v.get('nghe_nghiep', '').lower(),
+            'chuc_vu': v.get('chuc_vu', '').lower(), 'don_vi': v.get('don_vi', ''), 'chi_bo': v.get('chi_bo', '')}
+    return re.sub(r'\{(\w+)\}', lambda m: vals.get(m.group(1)) or m.group(0), text)
 
-KHUYET_DIEM = """Kinh nghiệm công tác còn hạn chế, cần tiếp tục học tập, rèn luyện thêm."""
 
 # (khóa, nhãn, kiểu, mặc định, ghi chú). Kiểu: text | date | int | long.
 # Các khóa nằm trong tab "Đơn vị" được lưu lại cho lần sau (don_vi.json).
@@ -260,6 +258,8 @@ def build_context(data):
     })
 
     # Đoạn văn dài
+    for k in NX_KEYS:
+        v[k] = re.sub(r'\{\w+\}', TRONG, thay_the(v[k], v))
     ctx['nhan_thuc'] = lines(v['nhan_thuc']) or [TRONG * 6]
     ctx['ly_lich'] = lines(v['ly_lich']) or [TRONG * 6]
     uu, kd = lines(v['uu_diem']), lines(v['khuyet_diem'])
@@ -332,10 +332,28 @@ def chay_giao_dien():
         row = 0
         for key, label, kind, default, note in fields:
             if kind == 'long':
-                ttk.Label(frame, text=label).grid(row=row, column=0, columnspan=2, sticky='w', pady=(8, 2))
+                head = ttk.Frame(frame)
+                head.grid(row=row, column=0, columnspan=2, sticky='ew', pady=(10, 2))
+                ttk.Label(head, text=label).pack(side='left')
                 t = tk.Text(frame, height=7, wrap='word', undo=True)
                 t.grid(row=row + 1, column=0, columnspan=2, sticky='ew')
                 widgets[key] = t
+                presets = MAU_NX.get(key, [])
+                if presets:
+                    cb = ttk.Combobox(head, state='readonly', width=34, values=[x['ten'] for x in presets])
+                    cb.current(0)
+
+                    def dung(mode, key=key, cb=cb, t=t, presets=presets):
+                        text = thay_the(presets[cb.current()]['noi_dung'], get_data())
+                        if mode == 'them' and t.get('1.0', 'end').strip():
+                            t.insert('end', '\n' + text)
+                        else:
+                            t.delete('1.0', 'end')
+                            t.insert('1.0', text)
+                    ttk.Button(head, text='Thêm vào', command=lambda d=dung: d('them')).pack(side='right')
+                    ttk.Button(head, text='Thay', command=lambda d=dung: d('thay')).pack(side='right', padx=4)
+                    cb.pack(side='right')
+                    ttk.Label(head, text='Mẫu:', style='Ghi.TLabel').pack(side='right', padx=(10, 4))
                 row += 2
                 continue
             ttk.Label(frame, text=label).grid(row=row, column=0, sticky='w', pady=3, padx=(0, 10))
@@ -347,7 +365,7 @@ def chay_giao_dien():
                 row += 1
             row += 1
         if tab_name == 'Nhận xét':
-            ttk.Label(frame, style='Ghi.TLabel', text='Mỗi dòng là một đoạn. Có thể sửa nội dung gợi ý cho phù hợp từng người.'
+            ttk.Label(frame, style='Ghi.TLabel', text='Chọn mẫu rồi bấm "Thay" (thay toàn bộ) hoặc "Thêm vào" (nối thêm). Mỗi dòng là một đoạn; sửa lại cho đúng từng người.'
                       ).grid(row=row, column=0, columnspan=2, sticky='w', pady=6)
 
     def get_data():
