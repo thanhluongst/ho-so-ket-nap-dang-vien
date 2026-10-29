@@ -319,6 +319,57 @@ def build(name):
     d.save(out)
     print('Đã tạo', out)
 
+    # Bản tô đỏ chữ được điền (mau_do/) để dễ nhận biết khi kiểm tra
+    to_do(d)
+    out = HERE / 'mau_do' / f'{name}.docx'
+    out.parent.mkdir(exist_ok=True)
+    d.save(out)
+    print('Đã tạo', out)
+
+
+MAU_DO = 'FF0000'
+
+
+def set_red(run):
+    rpr = run.find(qn('w:rPr'))
+    if rpr is None:
+        rpr = run.makeelement(qn('w:rPr'), {})
+        run.insert(0, rpr)
+    for e in rpr.findall(qn('w:color')):
+        rpr.remove(e)
+    color = rpr.makeelement(qn('w:color'), {qn('w:val'): MAU_DO})
+    # w:color phải đứng trước w:sz, w:u... theo thứ tự của Word
+    after = [qn(t) for t in ('w:rStyle', 'w:rFonts', 'w:b', 'w:bCs', 'w:i', 'w:iCs', 'w:caps', 'w:smallCaps',
+                              'w:strike', 'w:dstrike', 'w:outline', 'w:shadow', 'w:emboss', 'w:imprint',
+                              'w:noProof', 'w:snapToGrid', 'w:vanish', 'w:webHidden')]
+    idx = 0
+    for k, c in enumerate(rpr):
+        if c.tag in after:
+            idx = k + 1
+    rpr.insert(idx, color)
+
+
+def to_do(d):
+    """Tách từng trường {{ ... }} ra run riêng và tô đỏ, chữ cố định của mẫu giữ nguyên màu."""
+    for t in list(d.element.body.iter(qn('w:t'))):
+        text = t.text or ''
+        if '{{' not in text:
+            continue
+        run = t.getparent()
+        others = [c for c in run if c.tag not in (qn('w:rPr'), qn('w:t'))]
+        if others or len(run.findall(qn('w:t'))) > 1:
+            set_red(run)
+            continue
+        for piece in re.split(r'(\{\{.*?\}\})', text):
+            if not piece:
+                continue
+            r = copy.deepcopy(run)
+            r.find(qn('w:t')).text = piece
+            if piece.startswith('{{'):
+                set_red(r)
+            run.addprevious(r)
+        run.getparent().remove(run)
+
 
 if __name__ == '__main__':
     for n in SPEC:

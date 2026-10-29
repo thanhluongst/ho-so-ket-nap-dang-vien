@@ -102,6 +102,8 @@ button.btn:disabled { opacity: .45; cursor: not-allowed; }
 .msg.ok { color: var(--ok); }
 .note { font-size: 12.5px; color: var(--muted); margin: 0; }
 input[type=file] { display: none; }
+.check { display: flex; gap: 8px; align-items: center; font-weight: 400; cursor: pointer; }
+.check input { width: auto; accent-color: var(--accent); }
 .preset { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .preset select {
   font: inherit; font-size: 14px; color: var(--fg); background: var(--bg); border: 1px solid var(--line);
@@ -140,9 +142,10 @@ input[type=file] { display: none; }
       <div class="card">
         <h3>Xuất hồ sơ</h3>
         <ul class="mau" id="mauList"></ul>
+        <label class="check"><input type="checkbox" id="chkDo" checked> Tô đỏ thông tin đã nhập</label>
         <button class="btn" id="btnZip" type="button">Tải cả bộ (.zip)</button>
         <div id="exportMsg" hidden></div>
-        <p class="note">Ô nào để trống sẽ giữ dấu "……" trên mẫu để viết tay.</p>
+        <p class="note">Ô nào để trống sẽ giữ dấu "……" trên mẫu để viết tay. Bỏ chọn tô đỏ trước khi in bản chính thức.</p>
       </div>
       <div class="card">
         <h3>Thông tin đã nhập</h3>
@@ -402,7 +405,8 @@ function buildContext(data) {
 // ---------- tạo file Word
 function b64ToBytes(b64) { const s = atob(b64); const a = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; }
 function renderMau(key, ctx) {
-  const doc = new window.docxtemplater(new PizZip(b64ToBytes(window.MAU_DATA[key])), {
+  const red = document.getElementById('chkDo').checked;
+  const doc = new window.docxtemplater(new PizZip(b64ToBytes(window.MAU_DATA[red ? key + '_do' : key])), {
     paragraphLoop: true, linebreaks: true, delimiters: { start: '{{', end: '}}' },
     nullGetter: () => '',
   });
@@ -628,6 +632,9 @@ function init() {
   show(donvi && donvi.chi_bo ? 'quanchung' : 'donvi');
 
   $('btnZip').onclick = exportZip;
+  const chk = $('chkDo');
+  chk.checked = store.get('kn_to_do') ?? true;
+  chk.onchange = () => store.set('kn_to_do', chk.checked);
   $('btnSaveJson').onclick = () => save(`Thong tin - ${tenFile(data.ho_ten || 'ho so')}.json`, JSON.stringify(data, null, 2));
   $('btnOpenJson').onclick = () => $('fileJson').click();
   $('fileJson').onchange = async e => {

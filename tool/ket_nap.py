@@ -11,6 +11,7 @@ from docxtpl import DocxTemplate
 
 HERE = Path(__file__).parent
 MAU_DIR = HERE / 'mau'
+MAU_DO_DIR = HERE / 'mau_do'   # bản tô đỏ chữ được điền
 HOSO_DIR = HERE.parent / 'HoSo'
 DON_VI_FILE = HERE / 'don_vi.json'
 
@@ -272,13 +273,13 @@ def ten_thu_muc(ho_ten):
     return re.sub(r'[\\/:*?"<>|]', '', ho_ten).strip()
 
 
-def xuat_ho_so(data, thu_muc=None):
-    """Điền 5 mẫu, lưu vào HoSo/<họ tên>/. Trả về thư mục kết quả."""
+def xuat_ho_so(data, thu_muc=None, to_do=True):
+    """Điền 5 mẫu, lưu vào HoSo/<họ tên>/. to_do: tô đỏ chữ được điền. Trả về thư mục kết quả."""
     ctx = build_context(data)
     out = Path(thu_muc) if thu_muc else HOSO_DIR / ten_thu_muc(data['ho_ten'])
     out.mkdir(parents=True, exist_ok=True)
     for key, ten in MAU:
-        tpl = DocxTemplate(MAU_DIR / f'{key}.docx')
+        tpl = DocxTemplate((MAU_DO_DIR if to_do else MAU_DIR) / f'{key}.docx')
         tpl.render(ctx, autoescape=True)
         tpl.save(out / f'{ten}.docx')
     luu_json(out / 'thong_tin.json', data)
@@ -411,7 +412,7 @@ def chay_giao_dien():
 
     def xuat():
         try:
-            out = xuat_ho_so(get_data())
+            out = xuat_ho_so(get_data(), to_do=to_do.get())
         except LoiNhap as e:
             messagebox.showwarning('Kiểm tra lại thông tin', str(e))
             return
@@ -428,6 +429,8 @@ def chay_giao_dien():
     ttk.Button(bar, text='Mở hồ sơ...', command=mo_ho_so).pack(side='left', padx=6)
     ttk.Button(bar, text='Lưu thông tin', command=luu).pack(side='left')
     ttk.Button(bar, text='XUẤT 5 MẪU WORD', command=xuat).pack(side='right')
+    to_do = tk.BooleanVar(value=True)
+    ttk.Checkbutton(bar, text='Tô đỏ thông tin đã nhập', variable=to_do).pack(side='right', padx=10)
     status = tk.StringVar(value='Tab "Đơn vị" chỉ cần nhập một lần, lần sau tự điền lại.')
     ttk.Label(root, textvariable=status, style='Ghi.TLabel', padding=(10, 0, 10, 6)).pack(fill='x')
 

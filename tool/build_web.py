@@ -22,9 +22,8 @@ def convert(xml):
     return xml
 
 
-data = {}
-for f in sorted((HERE / 'mau').glob('mau*.docx')):
-    src = zipfile.ZipFile(f)
+def pack(path):
+    src = zipfile.ZipFile(path)
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED) as dst:
         for item in src.infolist():
@@ -32,7 +31,13 @@ for f in sorted((HERE / 'mau').glob('mau*.docx')):
             if item.filename == 'word/document.xml':
                 content = convert(content.decode('utf-8')).encode('utf-8')
             dst.writestr(item, content)
-    data[f.stem] = base64.b64encode(buf.getvalue()).decode()
+    return base64.b64encode(buf.getvalue()).decode()
+
+
+data = {}  # mau1, ... và bản tô đỏ chữ được điền mau1_do, ...
+for folder, suffix in (('mau', ''), ('mau_do', '_do')):
+    for f in sorted((HERE / folder).glob('mau*.docx')):
+        data[f.stem + suffix] = pack(f)
 
 OUT.parent.mkdir(exist_ok=True)
 nhan_xet = json.loads((HERE / 'mau_nhan_xet.json').read_text(encoding='utf-8'))
