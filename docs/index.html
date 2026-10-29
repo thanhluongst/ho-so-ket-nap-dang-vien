@@ -192,7 +192,7 @@ input[type=file] { display: none; }
 <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.47.4/docxtemplater.js"></script>
-<script src="mau_data.js"></script>
+<script src="mau_data.js?v=1df3dcb8f5"></script>
 <script>
 const TRONG = '……………', TRONG_NGAY = '……';
 
@@ -618,23 +618,28 @@ function ctxOrError() {
 }
 
 let downloads = null;
-async function save(filename, bytes) {
+const MIME = {
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  zip: 'application/zip', json: 'application/json',
+};
+async function save(filename, bytes, msgId = 'exportMsg') {
   if (!downloads) {  // chạy ngoài claude.ai (GitHub Pages, mở file trực tiếp): tải bằng link thường
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([bytes]));
+    a.href = URL.createObjectURL(new Blob([bytes], { type: MIME[filename.split('.').pop()] || 'application/octet-stream' }));
     a.download = filename;
     document.body.appendChild(a);
     a.click();
-    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
-    showMsg('exportMsg', `Đã tải ${filename}`, 'ok');
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 30000);
+    showMsg(msgId, `Đã tải ${filename}. Xem trong thư mục Tải xuống (Downloads).`, 'ok');
     return;
   }
   try {
     await downloads.save({ filename, data: bytes });
-    showMsg('exportMsg', `Đã tải ${filename}`, 'ok');
+    showMsg(msgId, `Đã tải ${filename}`, 'ok');
   } catch (e) {
     const msg = { declined: 'Bạn đã hủy tải file.', rate_limited: 'Đang có một hộp thoại tải file mở, hãy xử lý nó trước.' }[e && e.code];
-    showMsg('exportMsg', msg || 'Không tải được file ở chế độ xem này.', msg ? '' : 'err');
+    showMsg(msgId, msg || 'Không tải được file ở chế độ xem này.', msg ? '' : 'err');
   }
 }
 
@@ -690,8 +695,12 @@ function init() {
     } catch { showMsg('dataMsg', 'File này không phải file thông tin hồ sơ (.json).', 'err'); }
   };
   $('btnExcelMau').onclick = () => {
+    if (!window.MAU_EXCEL) {
+      showMsg('excelMsg', 'Trình duyệt đang giữ bản cũ của trang. Bấm Ctrl + F5 để tải lại rồi thử lại.', 'err');
+      return;
+    }
     showMsg('excelMsg', '');
-    save('Mau nhap thong tin.xlsx', b64ToBytes(window.MAU_EXCEL));
+    save('Mau nhap thong tin.xlsx', b64ToBytes(window.MAU_EXCEL), 'excelMsg');
   };
   $('btnExcelNhap').onclick = () => $('fileExcel').click();
   $('fileExcel').onchange = async e => {

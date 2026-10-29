@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Chuyển các mẫu trong mau/ sang cú pháp docxtemplater cho bản online (web/mau_data.js)."""
 import base64
+import hashlib
 import io
 import json
 import re
@@ -51,6 +52,9 @@ print('Đã tạo', OUT, OUT.stat().st_size // 1024, 'KB')
 DOCS = HERE.parent / 'docs'
 DOCS.mkdir(exist_ok=True)
 page = (OUT.parent / 'index.html').read_text(encoding='utf-8').replace('<meta charset="utf-8">\n', '', 1)
+# gắn mã phiên bản để trình duyệt không dùng mau_data.js cũ trong bộ nhớ đệm
+ver = hashlib.sha1(OUT.read_bytes()).hexdigest()[:10]
+page = page.replace('src="mau_data.js"', f'src="mau_data.js?v={ver}"', 1)
 (DOCS / 'index.html').write_text(
     '<!doctype html>\n<html lang="vi">\n<head>\n<meta charset="utf-8">\n'
     '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
